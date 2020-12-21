@@ -71,15 +71,20 @@ public class QRScanReader extends ReactContextBaseJavaModule {
         Hashtable<DecodeHintType, String> hints = new Hashtable<>();
         hints.put(DecodeHintType.CHARACTER_SET, "UTF8"); //设置二维码内容的编码
 
-        BitmapFactory.Options options = new BitmapFactory.Options();
-        options.inJustDecodeBounds = true; // 先获取原大小
-        Bitmap scanBitmap = BitmapFactory.decodeFile(path, options);
-        options.inJustDecodeBounds = false; // 获取新的大小
-        int sampleSize = (int) (options.outHeight / (float) 200);
-        if (sampleSize <= 0)
-            sampleSize = 1;
-        options.inSampleSize = sampleSize;
-        scanBitmap = BitmapFactory.decodeFile(path, options);
+        // BitmapFactory.Options options = new BitmapFactory.Options();
+        // options.inJustDecodeBounds = true; // 先获取原大小
+        // Bitmap scanBitmap = BitmapFactory.decodeFile(path, options);
+        // options.inJustDecodeBounds = false; // 获取新的大小
+        // int sampleSize = (int) (options.outHeight / (float) 200);
+        // if (sampleSize <= 0)
+        //     sampleSize = 1;
+        // options.inSampleSize = sampleSize;
+        // scanBitmap = BitmapFactory.decodeFile(path, options);
+
+        Uri uri=Uri.parse(path);
+        InputStream imageStream = getReactApplicationContext().getContentResolver().openInputStream(uri);
+        Bitmap scanBitmap = BitmapFactory.decodeStream(imageStream);
+        
         int width=scanBitmap.getWidth();
         int height=scanBitmap.getHeight();
         int[] pixels=new int[width*height];
