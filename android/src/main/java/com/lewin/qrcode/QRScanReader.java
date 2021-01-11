@@ -2,6 +2,7 @@ package com.lewin.qrcode;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.net.Uri;
 
 import com.facebook.react.bridge.Promise;
 import com.facebook.react.bridge.ReactApplicationContext;
@@ -20,6 +21,8 @@ import com.google.zxing.Result;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.Hashtable;
 
 /**
@@ -38,7 +41,7 @@ public class QRScanReader extends ReactContextBaseJavaModule {
     }
 
     @ReactMethod
-    public void readerQR(String fileUrl, Promise promise ) {
+    public void readerQR(String fileUrl, Promise promise ) throws FileNotFoundException {
         Result result = scanningImage(fileUrl);
         if(result == null){
             promise.reject("404","没有相关的二维码");
@@ -64,7 +67,7 @@ public class QRScanReader extends ReactContextBaseJavaModule {
      * @param path
      * @return
      */
-    public Result scanningImage(String path) {
+    public Result scanningImage(String path) throws FileNotFoundException {
         if (path == null || path.length() == 0) {
             return null;
         }
@@ -81,10 +84,10 @@ public class QRScanReader extends ReactContextBaseJavaModule {
         // options.inSampleSize = sampleSize;
         // scanBitmap = BitmapFactory.decodeFile(path, options);
 
-        Uri uri=Uri.parse(path);
+        Uri uri= Uri.parse(path);
         InputStream imageStream = getReactApplicationContext().getContentResolver().openInputStream(uri);
         Bitmap scanBitmap = BitmapFactory.decodeStream(imageStream);
-        
+
         int width=scanBitmap.getWidth();
         int height=scanBitmap.getHeight();
         int[] pixels=new int[width*height];
